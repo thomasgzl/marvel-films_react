@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import './App.css';
 
-function App() {
+import { setLoading, setLoadCharacters, setDisplayMoreInfos } from './actions/actions'
+
+import ListCards from './ListCards';
+import SearchInput from './SearchInput';
+import fetchCharacters from './utils/fetchCharacters';
+
+const App = () => {
+  // const [loading, setLoading] = useState(false);
+  // const [listData, setListData] = useState([]);
+
+  // Redux
+  const loading = useSelector((state) => state.rootReducer.loading)
+  const listData = useSelector((state) => state.rootReducer.listData)
+  const dispatch = useDispatch();
+
+  const searchData = (value) => {
+    dispatch(setLoading(true));
+    fetchCharacters(value).then((response) => {
+      dispatch(setLoadCharacters(response));
+      dispatch(setLoading(false));
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main">
+      <SearchInput searchData={searchData} />
+      <ListCards listData={listData} loading={loading} />
     </div>
   );
-}
+};
 
 export default App;
